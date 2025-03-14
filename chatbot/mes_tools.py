@@ -233,7 +233,7 @@ def get_tool_config():
             {
                 "toolSpec": {
                     "name": "execute_sql",
-                    "description": "Execute SQL queries against the MES database ONLY after you have retrieved and examined the schema. Write efficient SQL that joins relevant tables and focuses on answering the user's specific question.",
+                    "description": "Execute SQL queries against the MES database ONLY after you have retrieved and examined the schema. Write efficient SQLite that joins relevant tables and focuses on answering the user's specific question.",
                     "inputSchema": {
                         "json": {
                             "type": "object",
