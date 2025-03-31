@@ -10,7 +10,49 @@ The implementation includes a simulated MES database for an e-bike manufacturer 
 
 ## High-level Architecture Pattern
 
-![MES System Architecture](assets/MES-chatbot-sys-architecture.png)
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI as Streamlit Interface
+    participant LLM as Amazon Bedrock LLM
+    participant Tools as MES Tools
+    participant DB as SQLite MES Database
+    
+    User->>UI: Ask question (e.g., "What's our current inventory?")
+    UI->>LLM: Forward user question via Converse API
+    
+    LLM->>Tools: Call get_schema tool
+    Tools->>DB: Query database schema metadata
+    DB->>Tools: Return tables, columns, relationships, samples
+    Tools->>LLM: Return structured schema information
+    
+    Note over LLM: Analyze schema & formulate appropriate SQL query
+    
+    LLM->>Tools: Call execute_sql tool with generated query
+    Tools->>DB: Execute SQL query
+    
+    alt Query successful
+        DB->>Tools: Return query results
+        Note over Tools: Process results & generate visualizations
+    else Query contains errors
+        DB->>Tools: Return error message
+        Tools->>LLM: Return SQL error details
+        Note over LLM: Analyze error & reformulate query
+        LLM->>Tools: Call execute_sql with corrected query
+        Tools->>DB: Execute corrected SQL query
+        DB->>Tools: Return query results
+        Note over Tools: Process results & generate visualizations
+    end
+    
+    Tools->>LLM: Return query results as structured data
+    
+    Note over LLM: Analyze data & generate natural language response
+    
+    LLM->>UI: Return complete answer with explanation
+    UI->>User: Display answer, SQL query, data table & visualizations
+    
+    Note over User,UI: User can ask follow-up questions, continuing the cycle
+```
 
 ## Repo Content
 This repository contains the following:
